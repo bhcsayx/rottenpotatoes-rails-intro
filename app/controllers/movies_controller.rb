@@ -8,8 +8,11 @@ class MoviesController < ApplicationController
 
   def index
 
-	@selected_ratings = (params[:ratings] || {})
-	@selected_sort = (params[:sort] || {})
+	if params[:ratings].nil? and params[:commit]
+		session.clear()
+	end
+	@selected_ratings = (params[:ratings] || session[:selected_ratings] || {})
+	@selected_sort = (params[:sort] || session[:selected_sort] || {})
 	@all_ratings = Movie.all_ratings
 	if @selected_ratings.size > 0
 		@ratings_to_show = @selected_ratings.keys
@@ -31,6 +34,9 @@ class MoviesController < ApplicationController
 		@releaseDateCSS = "hilite bg-warning"
 		@titleCSS = ""
 	end
+
+	session[:selected_ratings] = params[:ratings]
+	session[:selected_sort] = params[:sort]
 
   end
 
