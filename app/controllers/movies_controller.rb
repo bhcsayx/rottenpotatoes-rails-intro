@@ -9,6 +9,7 @@ class MoviesController < ApplicationController
   def index
 
 	@selected_ratings = (params[:ratings] || {})
+	@selected_sort = (params[:sort] || {})
 	@all_ratings = Movie.all_ratings
 	if @selected_ratings.size > 0
 		@ratings_to_show = @selected_ratings.keys
@@ -16,7 +17,21 @@ class MoviesController < ApplicationController
 		@ratings_to_show = []
 	end
 
-	@movies = Movie.with_ratings(@ratings_to_show)
+	if @selected_sort != nil
+		@movies = Movie.with_ratings(@ratings_to_show).order(@selected_sort)
+	else
+		@movies = Movie.with_ratings(@ratings_to_show)
+	end
+	
+	#highlight selected sort keywords
+	if @selected_sort == "title"
+		@titleCSS = "hilite bg-warning"
+		@releaseDateCSS = ""
+	elsif @selected_sort == "release_date"
+		@releaseDateCSS = "hilite bg-warning"
+		@titleCSS = ""
+	end
+
   end
 
   def new
